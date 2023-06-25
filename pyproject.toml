@@ -3,7 +3,7 @@ requires = ["setuptools>=65", "wheel"]
 
 
 [project]
-name = "openapi-typed"
+name = "openapi-pydantic-models"
 version = "0.1.0"
 description = "pydantic models for OpeanAPI Specification 3.1.0 objects."
 readme = "README.md"
@@ -25,7 +25,7 @@ dependencies = ["pydantic"]
 
 
 [project.urls]
-Source = "https://github.com/tadams42/openapi-typed"
+Source = "https://github.com/tadams42/openapi-pydantic-models"
 
 
 [project.optional-dependencies]

@@ -1,4 +1,4 @@
-# openapi-typed
+# openapi-pydantic-models
 
 [OpenAPI Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0) objects implemented
 as [pydantic](https://docs.pydantic.dev/) models.
@@ -6,7 +6,7 @@ as [pydantic](https://docs.pydantic.dev/) models.
 ## Install
 
 ```sh
-pip install openapi-typed
+pip install openapi-pydantic-models
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ It can load whole OpenAPI specification:
 import requests
 import yaml
 
-from openapi_typed import OpenAPIObject
+from openapi_pydantic_models import OpenAPIObject
 
 url = "https://rapidocweb.com/specs/petstore_extended.yaml"
 response = requests.get(url)
@@ -70,7 +70,7 @@ Loading specification performs minimal (unavoidable) validation: it rises except
 unknown fields:
 
 ```py
-from openapi_typed import ResponseObject
+from openapi_pydantic_models import ResponseObject
 
 data = {
     "description": 'successful operation',
@@ -85,7 +85,7 @@ obj = ResponseObject.parse_obj(data)
 ```
 
 Any other validations defined by OpenAPI Specification are not implemented.
-`openapi-typed` intends to make programmatic editing of OpenAPI specifications easier
+`openapi-pydantic-models` intends to make programmatic editing of OpenAPI specifications easier
 and developer friendly (compared to working with "raw" `dict`-s). Complex spec
 validations are already implemented in other packages.
 
@@ -115,8 +115,8 @@ Specification](https://spec.openapis.org/oas/v3.1.0) is already fully and excell
 documented.
 
 In OpenAPI docs, wherever you see "Foo Object" you can find `class FooObject` in
-`openapi-typed`. Reverse works too: if you want to know what is
-`openapi_typed.ServerObject` check [4.8.5 Server
+`openapi-pydantic-models`. Reverse works too: if you want to know what is
+`openapi_pydantic_models.ServerObject` check [4.8.5 Server
 Object](https://spec.openapis.org/oas/v3.1.0#server-object)
 
 ## Where are the tests?

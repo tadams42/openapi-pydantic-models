@@ -1,4 +1,4 @@
-from openapi_typed import OpenAPIObject
+from openapi_pydantic_models import OpenAPIObject
 
 
 class DescribeOpenAPIObject:
