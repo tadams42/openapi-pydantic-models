@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push
+
+jobs:
+
+  run_tests:
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    name: "${{ matrix.os }} 🔹 🐍 ${{ matrix.python-version }}"
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: "📦 set up 🐍 ${{ matrix.python-version }}"
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: pyproject.toml
+      - name: "📦 ensure latest 🐍 pip"
+        run: python -m pip install --upgrade pip
+      - name: "📦 ensure 🐍 wheel"
+        run: pip install wheel
+      - name: "📦 install openapi-pydantic-models"
+        run: pip install .[tests]
+
+      - name: "run tests"
+        run: pytest
