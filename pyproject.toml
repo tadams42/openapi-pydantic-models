@@ -4,8 +4,8 @@ requires = ["setuptools>=65", "wheel"]
 
 [project]
 name = "openapi-typed"
-version = "0.0.1"
-description = "OpenaAPI spec stongly typed"
+version = "0.1.0"
+description = "pydantic models for OpeanAPI Specification 3.1.0 objects."
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["OpenAPI OAS"]
 license = { text = "MIT" }
 authors = [{ name = "Tomislav Adamic", email = "tomislav.adamic@gmail.com" }]
-dependencies = ["wrapt", "pyyaml", "pydantic"]
+dependencies = ["pydantic"]
 
 
 [project.urls]
@@ -38,6 +38,8 @@ dev = [
     "isort >= 5.10.1",
     "pip-tools >= 6.5.1",
     "rich",
+    "requests",
+    "pyyaml",
 ]
 # For dev machines and CI generating docs
 docs = [
@@ -57,6 +59,7 @@ tests = [
     "pytest-spec >= 3.2.0",
     "pytest-profiling >= 1.7.0",
     "pytest-random-order>=1.0.4",
+    "pyyaml",
 ]
 
 
