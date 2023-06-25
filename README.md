@@ -52,8 +52,8 @@ ResponseObject(
 )
 ```
 
-Any object from can always be exported back to OpenaAPI data (`dict`) via `dict()`
-method:
+Any object from object tree can always be exported back to OpenaAPI data (`dict`) via
+`dict()` method:
 
 ```py
 spec.paths["/pet/{petId}/uploadImage"].post.responses["200"].dict()
@@ -110,6 +110,25 @@ ExtensionsStorage({'x-foo': 'bar', 'x-bar': [42]})
 
 obj.dict()
 {'description': 'successful operation', 'x-foo': 'bar', 'x-bar': [42]}
+```
+
+And of course, all objects can be edited:
+
+```py
+obj.description = "ZOMG!"
+obj.extensions["x-baz"] = {1: {2: 3}}
+obj.dict()
+{'description': 'ZOMG!', 'x-foo': 'bar', 'x-bar': [42], 'x-baz': {1: {2: 3}}}
+```
+
+where specification extensions are protected from invalid keys:
+
+```py
+obj.extensions["baz"] = 34
+# KeyError: 'baz'
+
+obj.extensions["x-baz"] = 34
+# OK
 ```
 
 ## Where are the docs for this thing?
