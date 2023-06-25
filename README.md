@@ -1,5 +1,9 @@
 # openapi-pydantic-models
 
+[![PyPI Status](https://badge.fury.io/py/openapi-pydantic-models.svg)](https://badge.fury.io/py/openapi-pydantic-models)
+[![license](https://img.shields.io/pypi/l/openapi-pydantic-models.svg)](https://opensource.org/licenses/MIT)
+[![python_versions](https://img.shields.io/pypi/pyversions/openapi-pydantic-models.svg)](https://pypi.org/project/openapi-pydantic-models/)
+
 [OpenAPI Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0) objects implemented
 as [pydantic](https://docs.pydantic.dev/) models.
 
