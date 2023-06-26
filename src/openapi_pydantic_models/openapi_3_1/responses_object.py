@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import itertools
-from typing import Iterator, MutableMapping
+from typing import Any, Iterator, MutableMapping
 
 from pydantic import PrivateAttr
 
@@ -105,7 +105,9 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
 
         return f"{self.__class__.__name__}({repr(data)})"
 
-    def dict(self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs):
+    def dict(
+        self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
+    ) -> dict[str, Any]:
         retv = {
             k: (
                 v.dict(by_alias=by_alias, exclude_none=exclude_none, **kwargs)

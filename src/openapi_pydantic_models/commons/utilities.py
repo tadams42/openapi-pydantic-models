@@ -13,9 +13,31 @@ def is_blank(data: Any) -> bool:
 
     retv = None
 
+    # security: list[SecurityRequirementObject] | None = None
+    #
+    # example:
+    #
+    #     data = {
+    #         "security": [{"refresh_token": []}]
+    #     }
+    #
+    # Is non-blank object in context of OpenAPI, although
+    #
+    #     is_blank(data) == True
+
     # Mapping
     try:
-        retv = all(is_blank(v) for v in data.values())
+        found_non_blank = False
+        for k, v in data.items():
+            if k == "security":
+                found_non_blank = bool(v and any(_.keys() for _ in v))
+            else:
+                found_non_blank = not is_blank(v)
+
+            if found_non_blank:
+                break
+
+        retv = not found_non_blank
     except AttributeError:
         pass
     if retv is not None:
@@ -65,9 +87,24 @@ def exclude_blanks(data: Any):
 
     # Mapping
     try:
-        retv = type(data)(
-            (k, v) for k, v in retv.items() if not is_blank(k) and not is_blank(v)
-        )
+        tuples = []
+        for k, v in retv.items():
+            if k == "security" and v:
+                tuples.append(
+                    (
+                        k,
+                        [_ for _ in v if _ and _.keys()],
+                    )
+                )
+            elif not is_blank(k) and not is_blank(v):
+                tuples.append(
+                    (
+                        k,
+                        v,
+                    )
+                )
+
+        retv = type(data)(_ for _ in tuples)
         return retv or None
     except (AttributeError, TypeError):
         pass

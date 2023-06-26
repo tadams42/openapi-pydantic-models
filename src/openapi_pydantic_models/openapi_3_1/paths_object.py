@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterator, MutableMapping
+from typing import Any, Iterator, MutableMapping
 
 from pydantic import PrivateAttr
 
@@ -110,7 +110,9 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
             + ")"
         )
 
-    def dict(self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs):
+    def dict(
+        self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
+    ) -> dict[str, Any]:
         retv = {
             k: (
                 v.dict(by_alias=by_alias, exclude_none=exclude_none, **kwargs)

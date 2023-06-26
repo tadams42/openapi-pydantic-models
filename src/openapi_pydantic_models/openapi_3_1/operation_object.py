@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from .external_documentation_object import ExternalDocumentationObject
 from .parameter_object import ParameterObject
 from .reference_object import ReferenceObject
@@ -8,8 +10,6 @@ from .responses_object import ResponsesObject
 from .security_requirement_object import SecurityRequirementObject
 from .server_object import ServerObject
 from .specification_extensions import SpecificationExtendable
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .callback_object import CallbackObject
