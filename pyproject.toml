@@ -4,12 +4,12 @@ requires = ["setuptools>=65", "wheel"]
 
 [project]
 name = "openapi-pydantic-models"
-version = "0.2.0"
+version = "1.0.0"
 description = "pydantic models for OpeanAPI Specification 3.1.0 objects."
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python",
