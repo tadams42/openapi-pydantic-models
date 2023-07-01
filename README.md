@@ -26,7 +26,7 @@ from openapi_pydantic_models import OpenAPIObject
 url = "https://rapidocweb.com/specs/petstore_extended.yaml"
 response = requests.get(url)
 data = yaml.full_load(response.text)
-spec = OpenAPIObject.parse_obj(data)
+spec = OpenAPIObject.model_validate(data)
 ```
 
 All parts of OpenAPI object tree are represented by Python classes with static type
@@ -52,11 +52,11 @@ ResponseObject(
 )
 ```
 
-Any object from object tree can always be exported back to OpenaAPI data (`dict`) via
-`dict()` method:
+Any object from object tree can always be exported back to OpenaAPI data (`model_dump`) via
+`model_dump()` method:
 
 ```py
-spec.paths["/pet/{petId}/uploadImage"].post.responses["200"].dict()
+spec.paths["/pet/{petId}/uploadImage"].post.responses["200"].model_dump()
 
 {
     'description': 'successful operation',
@@ -81,7 +81,7 @@ data = {
     "foo": "bar"
 }
 
-obj = ResponseObject.parse_obj(data)
+obj = ResponseObject.model_validate(data)
 
 # ValidationError: 1 validation error for ResponseObject
 # foo
@@ -89,8 +89,8 @@ obj = ResponseObject.parse_obj(data)
 ```
 
 Any other validations defined by OpenAPI Specification are not implemented.
-`openapi-pydantic-models` intends to make programmatic editing of OpenAPI specifications easier
-and developer friendly (compared to working with "raw" `dict`-s). Complex spec
+`openapi-pydantic-models` intends to make programmatic editing of OpenAPI specifications
+easier and developer friendly (compared to working with "raw" `dict`-s). Complex spec
 validations are already implemented in other packages.
 
 Even though "extra" fields in input are not allowed, [4.9 Specification
@@ -103,12 +103,12 @@ data = {
     "x-foo": "bar",
     "x-bar": [42]
 }
-obj = ResponseObject.parse_obj(data)
+obj = ResponseObject.model_validate(data)
 
 obj.extensions
 ExtensionsStorage({'x-foo': 'bar', 'x-bar': [42]})
 
-obj.dict()
+obj.model_dump()
 {'description': 'successful operation', 'x-foo': 'bar', 'x-bar': [42]}
 ```
 
@@ -117,7 +117,7 @@ And of course, all objects can be edited:
 ```py
 obj.description = "ZOMG!"
 obj.extensions["x-baz"] = {1: {2: 3}}
-obj.dict()
+obj.model_dump()
 {'description': 'ZOMG!', 'x-foo': 'bar', 'x-bar': [42], 'x-baz': {1: {2: 3}}}
 ```
 

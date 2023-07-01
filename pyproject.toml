@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["OpenAPI OAS"]
 license = { text = "MIT" }
 authors = [{ name = "Tomislav Adamic", email = "tomislav.adamic@gmail.com" }]
-dependencies = ["pydantic"]
+dependencies = ["pydantic >= 2.0"]
 
 
 [project.urls]

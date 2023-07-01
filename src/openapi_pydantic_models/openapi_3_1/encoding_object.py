@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from .reference_object import ReferenceObject
 from .specification_extensions import SpecificationExtendable

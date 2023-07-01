@@ -63,7 +63,7 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
         for typ in [PathItemObject]:
             if v is None:
                 try:
-                    v = typ.parse_obj(value)
+                    v = typ.model_validate(value)
                 except Exception:
                     pass
         if v is None:
@@ -89,7 +89,7 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
     def __str__(self) -> str:
         return str(
             {
-                k: v.dict(by_alias=True, exclude_none=False)
+                k: v.model_dump(by_alias=True, exclude_none=False)
                 if isinstance(v, PathItemObject)
                 else v
                 for k, v in self._data.items()
@@ -101,7 +101,7 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
             f"{self.__class__.__name__}("
             + repr(
                 {
-                    k: v.dict(by_alias=True, exclude_none=False)
+                    k: v.model_dump(by_alias=True, exclude_none=False)
                     if isinstance(v, PathItemObject)
                     else v
                     for k, v in self._data.items()
@@ -110,12 +110,12 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
             + ")"
         )
 
-    def dict(
+    def model_dump(
         self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
     ) -> dict[str, Any]:
         retv = {
             k: (
-                v.dict(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
+                v.model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
                 if isinstance(v, PathItemObject)
                 else v
             )

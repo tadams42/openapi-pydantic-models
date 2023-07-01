@@ -6,7 +6,7 @@ class DescribeOpenAPIObject:
         exception = False
 
         try:
-            obj = OpenAPIObject.parse_obj(petstore_extended)
+            obj = OpenAPIObject.model_validate(petstore_extended)
 
         except Exception:
             exception = True

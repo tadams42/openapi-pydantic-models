@@ -57,7 +57,7 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
         for typ in [ReferenceObject, ResponseObject]:
             if v is None:
                 try:
-                    v = typ.parse_obj(value)
+                    v = typ.model_validate(value)
                 except Exception:
                     pass
         if v is None:
@@ -82,35 +82,35 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
 
     def __str__(self) -> str:
         data = {
-            k: v.dict(by_alias=True, exclude_none=False)
+            k: v.model_dump(by_alias=True, exclude_none=False)
             if isinstance(v, (ReferenceObject, ResponseObject))
             else v
             for k, v in self._data.items()
         }
 
         if self.default:
-            data["default"] = self.default.dict(by_alias=True, exclude_none=False)
+            data["default"] = self.default.model_dump(by_alias=True, exclude_none=False)
 
         return str(data)
 
     def __repr__(self) -> str:
         data = {
-            k: v.dict(by_alias=True, exclude_none=False)
+            k: v.model_dump(by_alias=True, exclude_none=False)
             if isinstance(v, (ReferenceObject, ResponseObject))
             else v
             for k, v in self._data.items()
         }
         if self.default:
-            data["default"] = self.default.dict(by_alias=True, exclude_none=False)
+            data["default"] = self.default.model_dump(by_alias=True, exclude_none=False)
 
         return f"{self.__class__.__name__}({repr(data)})"
 
-    def dict(
+    def model_dump(
         self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
     ) -> dict[str, Any]:
         retv = {
             k: (
-                v.dict(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
+                v.model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
                 if isinstance(v, (ReferenceObject, ResponseObject))
                 else v
             )

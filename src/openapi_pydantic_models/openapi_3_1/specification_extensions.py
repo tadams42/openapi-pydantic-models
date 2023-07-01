@@ -82,16 +82,16 @@ class SpecificationExtendable(BaseModel):
         >>> SomeModel(attr='...')
         repr(obj.extensions)
         >>> "ExtensionsStorage({'x-foo': 42, 'x-bar': ['baz']})"
-        obj.dict()
+        obj.model_dump()
         >>> {'attr': '...', 'x-foo': 42, 'x-bar': ['baz']}
 
-        obj = SomeModel.parse_obj(data)
+        obj = SomeModel.model_validate(data)
 
         repr(obj)
         >>> SomeModel(attr='...')
         repr(obj.extensions)
         >>> "ExtensionsStorage({'x-foo': 42, 'x-bar': ['baz']})"
-        obj.dict()
+        obj.model_dump()
         >>> {'attr': '...', 'x-foo': 42, 'x-bar': ['baz']}
     """
 
@@ -107,11 +107,11 @@ class SpecificationExtendable(BaseModel):
     def extensions(self) -> ExtensionsStorage:
         return self._ext
 
-    def dict(
+    def model_dump(
         self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
     ) -> dict[str, Any]:
         retv = (
-            super().dict(exclude_none=exclude_none, by_alias=by_alias, **kwargs)
+            super().model_dump(exclude_none=exclude_none, by_alias=by_alias, **kwargs)
             or dict()
         )
 
