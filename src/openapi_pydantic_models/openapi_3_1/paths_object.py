@@ -1,14 +1,14 @@
 import itertools
 from typing import Any, Iterator, MutableMapping
 
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, model_serializer
 
 from ..commons import BaseModel, exclude_blanks
 from .path_item_object import PathItemObject
 from .specification_extensions import ExtensionsStorage
 
 
-class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
+class PathsObject(BaseModel, MutableMapping[str, PathItemObject]):
     """
     Model for OpenAPI Paths Object. This object is mapping of path template strings
     with PathItemObject.
@@ -110,19 +110,16 @@ class PathsObject(MutableMapping[str, PathItemObject], BaseModel):
             + ")"
         )
 
-    def model_dump(
-        self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
-    ) -> dict[str, Any]:
-        retv = {
-            k: (
-                v.model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
+    @model_serializer
+    def ser_model(self) -> dict[str, Any]:
+        retv = dict()
+        for k, v in itertools.chain(self._data.items(), self._ext.items()):
+            retv[k] = (
+                v.model_dump(by_alias=True, exclude_none=True)
                 if isinstance(v, PathItemObject)
                 else v
             )
-            for k, v in itertools.chain(self._data.items(), self._ext.items())
-        }
 
-        if exclude_none:
-            retv = exclude_blanks(retv)
+        retv = exclude_blanks(retv)
 
         return retv or dict()

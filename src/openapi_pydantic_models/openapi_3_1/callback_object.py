@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 from typing import Any, Iterator, MutableMapping
 
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, model_serializer
 
 from ..commons import BaseModel, exclude_blanks
 from .path_item_object import PathItemObject
@@ -11,7 +11,7 @@ from .reference_object import ReferenceObject
 from .specification_extensions import ExtensionsStorage
 
 
-class CallbackObject(MutableMapping[str, PathItemObject | ReferenceObject], BaseModel):
+class CallbackObject(BaseModel, MutableMapping[str, PathItemObject | ReferenceObject]):
     """
     Model for OpenAPI CallbackObject.
 
@@ -100,19 +100,16 @@ class CallbackObject(MutableMapping[str, PathItemObject | ReferenceObject], Base
             + ")"
         )
 
-    def model_dump(
-        self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
-    ) -> dict[str, Any]:
-        retv = {
-            k: (
-                v.model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
+    @model_serializer
+    def ser_model(self) -> dict[str, Any]:
+        retv = dict()
+        for k, v in itertools.chain(self._data.items(), self._ext.items()):
+            retv[k] = (
+                v.model_dump(by_alias=True, exclude_none=True)
                 if isinstance(v, (ReferenceObject, PathItemObject))
                 else v
             )
-            for k, v in itertools.chain(self._data.items(), self._ext.items())
-        }
 
-        if exclude_none:
-            retv = exclude_blanks(retv)
+        retv = exclude_blanks(retv)
 
         return retv or dict()

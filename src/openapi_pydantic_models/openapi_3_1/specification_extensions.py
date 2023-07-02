@@ -2,7 +2,8 @@ import re
 from collections.abc import MutableMapping
 from typing import Any, Iterator
 
-from pydantic import PrivateAttr
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ConfigDict, PrivateAttr
 
 from ..commons import BaseModel, exclude_blanks
 
@@ -54,7 +55,7 @@ class ExtensionsStorage(MutableMapping[str, Any]):
         )
 
 
-class SpecificationExtendable(BaseModel):
+class SpecificationExtendable(PydanticBaseModel):
     """
     Base model class for models that can be extended via OpenAPI specification
     extensions.
@@ -95,6 +96,13 @@ class SpecificationExtendable(BaseModel):
         >>> {'attr': '...', 'x-foo': 42, 'x-bar': ['baz']}
     """
 
+    model_config = ConfigDict(
+        from_attributes=True,
+        str_strip_whitespace=True,
+        extra="forbid",
+        use_enum_values=True,
+    )
+
     _ext: ExtensionsStorage = PrivateAttr(default_factory=ExtensionsStorage)
 
     def __init__(self, **data):
@@ -111,10 +119,9 @@ class SpecificationExtendable(BaseModel):
         self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
     ) -> dict[str, Any]:
         retv = (
-            super().model_dump(exclude_none=exclude_none, by_alias=by_alias, **kwargs)
+            super().model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
             or dict()
         )
-
         for k, v in self._ext.items():
             retv[str(k)] = v
 

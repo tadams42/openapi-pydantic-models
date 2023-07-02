@@ -33,3 +33,9 @@ from .server_variable_object import ServerVariableObject
 from .specification_extensions import ExtensionsStorage, SpecificationExtendable
 from .styles import Styles
 from .tag_object import TagObject
+
+
+OperationObject.model_rebuild()
+MediaTypeObject.model_rebuild()
+PathItemObject.model_rebuild()
+OpenAPIObject.model_rebuild()

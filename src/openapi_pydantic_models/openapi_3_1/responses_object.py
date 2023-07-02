@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import itertools
-from typing import Any, Iterator, MutableMapping
+from collections.abc import MutableMapping
+from typing import Any, Iterator
 
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, Field, model_serializer
 
 from ..commons import BaseModel, exclude_blanks
 from .reference_object import ReferenceObject
@@ -11,7 +12,7 @@ from .response_object import ResponseObject
 from .specification_extensions import ExtensionsStorage
 
 
-class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], BaseModel):
+class ResponsesObject(BaseModel, MutableMapping[str, ResponseObject | ReferenceObject]):
     """
     Model for OpenAPI ResponsesObject. This object is mapping of HTTP status codes
     with responses.
@@ -20,17 +21,17 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
     Extensions](https://spec.openapis.org/oas/v3.1.0#specificationExtensions).
     """
 
-    default: ResponseObject | ReferenceObject | None = None
+    default_: ResponseObject | ReferenceObject | None = Field(
+        default=None, alias="default"
+    )
     _data: dict[str, ResponseObject | ReferenceObject] = PrivateAttr(
         default_factory=dict
     )
     _ext: ExtensionsStorage = PrivateAttr(default_factory=ExtensionsStorage)
 
-    def __init__(
-        self, *, default: ResponseObject | ReferenceObject | None = None, **kwargs
-    ):
-        super().__init__(default=default)
-        raw_data = dict(**kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**{k: v for k, v in kwargs.items() if k == "default"})
+        raw_data = dict(**{k: v for k, v in kwargs.items() if k != "default"})
         self._ext = ExtensionsStorage(raw_data)
         for k, v in raw_data.items():
             if not ExtensionsStorage.is_key(str(k)):
@@ -88,8 +89,10 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
             for k, v in self._data.items()
         }
 
-        if self.default:
-            data["default"] = self.default.model_dump(by_alias=True, exclude_none=False)
+        if self.default_:
+            data["default"] = self.default_.model_dump(
+                by_alias=True, exclude_none=False
+            )
 
         return str(data)
 
@@ -100,24 +103,27 @@ class ResponsesObject(MutableMapping[str, ResponseObject | ReferenceObject], Bas
             else v
             for k, v in self._data.items()
         }
-        if self.default:
-            data["default"] = self.default.model_dump(by_alias=True, exclude_none=False)
+        if self.default_:
+            data["default"] = self.default_.model_dump(
+                by_alias=True, exclude_none=False
+            )
 
         return f"{self.__class__.__name__}({repr(data)})"
 
-    def model_dump(
-        self, *, by_alias: bool = True, exclude_none: bool = True, **kwargs
-    ) -> dict[str, Any]:
+    @model_serializer
+    def ser_model(self) -> dict[str, Any]:
         retv = {
-            k: (
-                v.model_dump(by_alias=by_alias, exclude_none=exclude_none, **kwargs)
+            "default": (self.default_.model_dump(by_alias=True, exclude_none=True))
+            if self.default_
+            else None
+        }
+        for k, v in itertools.chain(self._data.items(), self._ext.items()):
+            retv[k] = (
+                v.model_dump(by_alias=True, exclude_none=True)
                 if isinstance(v, (ReferenceObject, ResponseObject))
                 else v
             )
-            for k, v in itertools.chain(self._data.items(), self._ext.items())
-        }
 
-        if exclude_none:
-            retv = exclude_blanks(retv)
+        retv = exclude_blanks(retv)
 
         return retv or dict()
